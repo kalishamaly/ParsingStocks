@@ -17,7 +17,7 @@ from dash import Dash, html, dcc, callback, Output, Input, dash_table
 #declarables section
 maxStockPrice = 40
 rangeUse = 50
-exceedPerc = 50
+exceedPerc = 250
 
 # SEC ticker list
 sec_url = "https://www.sec.gov/files/company_tickers.json"
@@ -62,13 +62,62 @@ mid50Seven = {}
 mid50Five = {}
 short30Seven = {}
 short30Five ={}
-tickers = tickersLong[0:159]
+tickers = tickersLong
 for ticker in tickers:
     dataLong[ticker] = yf.Ticker(ticker).history(period = "1y")#Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-    closePrice = dataLong[ticker]['Close'][-1]
-    if 'maxStockPrice' in locals():
-        #pdb.set_trace()
-        if closePrice<=maxStockPrice:
+    if dataLong[ticker]['Close'].empty:
+        print("The {ticker} series is empty.")
+    else:    
+        closePrice = dataLong[ticker]['Close'][-1]
+        if 'maxStockPrice' in locals():
+            #pdb.set_trace()
+            if closePrice<=maxStockPrice:
+                stockSubMaxList[ticker] = closePrice
+                sevenDay = dataLong[ticker]['Close'][-8:-1]
+                sevenDayAvg[ticker] = sevenDay.mean()/7
+                fiveDay = dataLong[ticker]['Close'][-6:-1]
+                fiveDayAvg[ticker] = fiveDay.mean()/5
+                twoHunDay = dataLong[ticker]['Close'][-201:-1]
+                twoHunDayAvg[ticker] = twoHunDay.mean()/200
+                if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
+                    long200Seven[ticker] = "Bull"
+                else:
+                    long200Seven[ticker] = "Bear"
+                if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
+                    long200Five[ticker] = "Bull"
+                else:
+                    long200Five[ticker] = "Bear"
+                oneHunDay = dataLong[ticker]['Close'][-101:-1]
+                oneHunDayAvg[ticker] = oneHunDay.mean()/100
+                if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
+                    long100Seven[ticker] = "Bull"
+                else:
+                    long100Seven[ticker] = "Bear"
+                if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
+                    long100Five[ticker] = "Bull"
+                else:
+                    long100Five[ticker] = "Bear"
+                fiftyDay = dataLong[ticker]['Close'][-51:-1]
+                fiftyDayAvg[ticker] = fiftyDay.mean()/50
+                if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
+                    mid50Seven[ticker] = "Bull"
+                else:
+                    mid50Seven[ticker]= "Bear"
+                if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
+                    mid50Five[ticker] = "Bull"
+                else:
+                    mid50Five[ticker] = "Bear"
+                thirtyDay = dataLong[ticker]['Close'][-31:-1]
+                thirtyDayAvg[ticker] = thirtyDay.mean()/30
+                if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
+                    short30Seven[ticker] = "Bull"
+                else:
+                    short30Seven[ticker] = "Bear"
+                if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
+                    short30Five[ticker] = "Bull"
+                else:
+                    short30Five[ticker] = "Bear"
+        else:
             stockSubMaxList[ticker] = closePrice
             sevenDay = dataLong[ticker]['Close'][-8:-1]
             sevenDayAvg[ticker] = sevenDay.mean()/7
@@ -114,52 +163,6 @@ for ticker in tickers:
                 short30Five[ticker] = "Bull"
             else:
                 short30Five[ticker] = "Bear"
-    else:
-        stockSubMaxList[ticker] = closePrice
-        sevenDay = dataLong[ticker]['Close'][-8:-1]
-        sevenDayAvg[ticker] = sevenDay.mean()/7
-        fiveDay = dataLong[ticker]['Close'][-6:-1]
-        fiveDayAvg[ticker] = fiveDay.mean()/5
-        twoHunDay = dataLong[ticker]['Close'][-201:-1]
-        twoHunDayAvg[ticker] = twoHunDay.mean()/200
-        if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
-            long200Seven[ticker] = "Bull"
-        else:
-            long200Seven[ticker] = "Bear"
-        if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
-            long200Five[ticker] = "Bull"
-        else:
-            long200Five[ticker] = "Bear"
-        oneHunDay = dataLong[ticker]['Close'][-101:-1]
-        oneHunDayAvg[ticker] = oneHunDay.mean()/100
-        if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
-            long100Seven[ticker] = "Bull"
-        else:
-            long100Seven[ticker] = "Bear"
-        if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
-            long100Five[ticker] = "Bull"
-        else:
-            long100Five[ticker] = "Bear"
-        fiftyDay = dataLong[ticker]['Close'][-51:-1]
-        fiftyDayAvg[ticker] = fiftyDay.mean()/50
-        if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
-            mid50Seven[ticker] = "Bull"
-        else:
-            mid50Seven[ticker]= "Bear"
-        if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
-            mid50Five[ticker] = "Bull"
-        else:
-            mid50Five[ticker] = "Bear"
-        thirtyDay = dataLong[ticker]['Close'][-31:-1]
-        thirtyDayAvg[ticker] = thirtyDay.mean()/30
-        if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
-            short30Seven[ticker] = "Bull"
-        else:
-            short30Seven[ticker] = "Bear"
-        if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<fiveDayAvg[ticker]:
-            short30Five[ticker] = "Bull"
-        else:
-            short30Five[ticker] = "Bear"
     
 stocksPulled = list(short30Five.keys())
 optionsCallChain = {}
@@ -169,15 +172,17 @@ historyAll = {}
 
 for stock in stocksPulled:
     temp = yf.Ticker(stock)
-    companyNamesAll[stock] = temp.info['longName']
-    historyAll[stock] = temp.history(period = '1y')
-    closePrice[stock] = historyAll[stock]['Close'][-1]
-    expDates = temp.options
-    optionsCallChain[stock] = {}
-    for date in expDates:
-        temp = yf.Ticker(stock).option_chain(date = date)
-        optionsCallChain[stock][date] = temp.calls
-    
+    if 'longName' in temp.info:
+        if temp.info['longName']:
+            companyNamesAll[stock] = temp.info['longName']
+            historyAll[stock] = temp.history(period = '1y')
+            closePrice[stock] = historyAll[stock]['Close'][-1]
+            expDates = temp.options
+            optionsCallChain[stock] = {}
+            for date in expDates:
+                temp = yf.Ticker(stock).option_chain(date = date)
+                optionsCallChain[stock][date] = temp.calls
+        
         
     
 ################ App Portion ######################
