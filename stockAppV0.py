@@ -11,13 +11,13 @@ import requests
 import plotly.graph_objs as go
 #import pandas as pd
 from datetime import datetime, timedelta
-#import pdb
+import pdb
 from dash import Dash, html, dcc, callback, Output, Input, dash_table
 
 #declarables section
-maxStockPrice = 40
-rangeUse = 50
-exceedPerc = 250
+maxStockPrice = 10
+rangeUse = 100
+exceedPerc = 1550
 
 # SEC ticker list
 sec_url = "https://www.sec.gov/files/company_tickers.json"
@@ -62,7 +62,7 @@ mid50Seven = {}
 mid50Five = {}
 short30Seven = {}
 short30Five ={}
-tickers = tickersLong
+tickers = tickersLong[0:499]
 for ticker in tickers:
     dataLong[ticker] = yf.Ticker(ticker).history(period = "1y")#Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
     if dataLong[ticker]['Close'].empty:
@@ -74,11 +74,11 @@ for ticker in tickers:
             if closePrice<=maxStockPrice:
                 stockSubMaxList[ticker] = closePrice
                 sevenDay = dataLong[ticker]['Close'][-8:-1]
-                sevenDayAvg[ticker] = sevenDay.mean()/7
+                sevenDayAvg[ticker] = sevenDay.mean()
                 fiveDay = dataLong[ticker]['Close'][-6:-1]
-                fiveDayAvg[ticker] = fiveDay.mean()/5
+                fiveDayAvg[ticker] = fiveDay.mean()
                 twoHunDay = dataLong[ticker]['Close'][-201:-1]
-                twoHunDayAvg[ticker] = twoHunDay.mean()/200
+                twoHunDayAvg[ticker] = twoHunDay.mean()
                 if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                     long200Seven[ticker] = "Bull"
                 else:
@@ -88,7 +88,7 @@ for ticker in tickers:
                 else:
                     long200Five[ticker] = "Bear"
                 oneHunDay = dataLong[ticker]['Close'][-101:-1]
-                oneHunDayAvg[ticker] = oneHunDay.mean()/100
+                oneHunDayAvg[ticker] = oneHunDay.mean()
                 if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                     long100Seven[ticker] = "Bull"
                 else:
@@ -98,7 +98,7 @@ for ticker in tickers:
                 else:
                     long100Five[ticker] = "Bear"
                 fiftyDay = dataLong[ticker]['Close'][-51:-1]
-                fiftyDayAvg[ticker] = fiftyDay.mean()/50
+                fiftyDayAvg[ticker] = fiftyDay.mean()
                 if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                     mid50Seven[ticker] = "Bull"
                 else:
@@ -108,7 +108,7 @@ for ticker in tickers:
                 else:
                     mid50Five[ticker] = "Bear"
                 thirtyDay = dataLong[ticker]['Close'][-31:-1]
-                thirtyDayAvg[ticker] = thirtyDay.mean()/30
+                thirtyDayAvg[ticker] = thirtyDay.mean()
                 if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                     short30Seven[ticker] = "Bull"
                 else:
@@ -120,11 +120,11 @@ for ticker in tickers:
         else:
             stockSubMaxList[ticker] = closePrice
             sevenDay = dataLong[ticker]['Close'][-8:-1]
-            sevenDayAvg[ticker] = sevenDay.mean()/7
+            sevenDayAvg[ticker] = sevenDay.mean()
             fiveDay = dataLong[ticker]['Close'][-6:-1]
-            fiveDayAvg[ticker] = fiveDay.mean()/5
+            fiveDayAvg[ticker] = fiveDay.mean()
             twoHunDay = dataLong[ticker]['Close'][-201:-1]
-            twoHunDayAvg[ticker] = twoHunDay.mean()/200
+            twoHunDayAvg[ticker] = twoHunDay.mean()
             if twoHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                 long200Seven[ticker] = "Bull"
             else:
@@ -134,7 +134,7 @@ for ticker in tickers:
             else:
                 long200Five[ticker] = "Bear"
             oneHunDay = dataLong[ticker]['Close'][-101:-1]
-            oneHunDayAvg[ticker] = oneHunDay.mean()/100
+            oneHunDayAvg[ticker] = oneHunDay.mean()
             if oneHunDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                 long100Seven[ticker] = "Bull"
             else:
@@ -144,7 +144,7 @@ for ticker in tickers:
             else:
                 long100Five[ticker] = "Bear"
             fiftyDay = dataLong[ticker]['Close'][-51:-1]
-            fiftyDayAvg[ticker] = fiftyDay.mean()/50
+            fiftyDayAvg[ticker] = fiftyDay.mean()
             if fiftyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                 mid50Seven[ticker] = "Bull"
             else:
@@ -154,7 +154,7 @@ for ticker in tickers:
             else:
                 mid50Five[ticker] = "Bear"
             thirtyDay = dataLong[ticker]['Close'][-31:-1]
-            thirtyDayAvg[ticker] = thirtyDay.mean()/30
+            thirtyDayAvg[ticker] = thirtyDay.mean()
             if thirtyDayAvg[ticker]*((100+exceedPerc)/100)<sevenDayAvg[ticker]:
                 short30Seven[ticker] = "Bull"
             else:
@@ -257,9 +257,9 @@ def displayTrendImg(day,stock):
     elif day == "200 Days":
         stockTemp = twoHunDayAvg[stock]
     percChange = (sevenDayAvg[stock]/stockTemp)*100
-    if percChange > 400:
+    if percChange > rangeUse:
         imgFile = 'greenArrow.jpeg'
-    elif percChange < -400:
+    elif percChange < -rangeUse:
         imgFile = 'redArrow.jpeg'
     else:
         imgFile = 'neutral.jpg'
