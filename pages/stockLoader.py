@@ -191,7 +191,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
             if tickers[i]["Price"]>= tickers[i]["52 Week High"]-0.05*tickers[i]["52 Week High"]:
                 listCount+= 1
             if listCount >0:
-                watchList[i] = ticker
+                watchList[i] = tickers
                 
                 
 
