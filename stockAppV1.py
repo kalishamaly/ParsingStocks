@@ -17,9 +17,10 @@ from dash import Dash, html, dcc, callback, Output, Input, dash_table, page_cont
 app = Dash(__name__, use_pages=True)
 
 app.layout = html.Div([
-    html.H1("📊 Stock App Dashboard"),
+    html.H1("📊 Stock App"),
     dcc.Link("Home", href="/"), html.Br(),
     dcc.Link("Stock Loader", href="/stockLoader"), html.Br(),
+    dcc.Link("Watch List", href = "/watchList"), html.Br(),
     html.Hr(),
     page_container
 ])
