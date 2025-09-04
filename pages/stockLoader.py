@@ -1,15 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun  2 19:00:45 2025
-
-@author: kalishamay
-"""
-
-
-
-
-
 # Import necessary libraries
 import requests  # Used to fetch SEC ticker data
 from dash import html, callback, Output, Input, dash_table, register_page, dcc  # Dash components for building the app
@@ -19,7 +7,7 @@ import pandas as pd
 from collections import OrderedDict
 
 # Register this script as a page in a multi-page Dash app
-register_page(__name__, path="/stockLoader", name="Stock Loader")
+register_page(__name__, path="/stockLoader", name="Stock Loader",order =1)
 
 # Define layout for the page
 layout = html.Div([
@@ -71,6 +59,7 @@ import dash as dash
     prevent_initial_call=True
 )
 def handle_all_stock_actions(load_clicks, data_clicks, tickers):
+    watchList = {}
     ctx = callback_context
     triggered_id = ctx.triggered_id
 
@@ -151,7 +140,6 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
     elif triggered_id == 'dataBtn' and tickers:
         # Step 2: Enrich tickers with stock prices using yfinance
         for i, item in enumerate(tickers):
-            watchList = {}
             listCount = 0
             ticker = item['Ticker']
             try:
@@ -176,7 +164,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                     tickers[i]["Percent Change"] = 100*(round(hist['Close'].pct_change().mean() * 100,2))
                 except:
                     tickers[i]["Price Change"] = "Not Available"
-                    tickers[i]["Percent Change"]  - "Not Available"
+                    tickers[i]["Percent Change"]  = "Not Available"
             except:
                 tickers[i]['Price'] = "Not Available"
                 tickers[i]['52 Week High'] = "Not Available"
@@ -186,12 +174,20 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                 tickers[i]["Percent Change"] = "Not Available"
                 tickers[i]['P/E Ratio'] =  "Not Available"
                 tickers[i]["Average Volume"] = "Not Available"
-            if tickers[i]["Price"]>= tickers[i]["52 Week High"] :
-                listCount+= 2
-            if tickers[i]["Price"]>= tickers[i]["52 Week High"]-0.05*tickers[i]["52 Week High"]:
-                listCount+= 1
+            if (isinstance(tickers[i]["Price"], (int, float)) and 
+                isinstance(tickers[i]["52 Week High"], (int, float))):
+                if tickers[i]["Price"] >= tickers[i]["52 Week High"]:
+                    listCount += 2
+                if tickers[i]["Price"] >= tickers[i]["52 Week High"] - 0.05 * tickers[i]["52 Week High"]:
+                    listCount += 1
+                if tickers[i]["Volume"]>= tickers[i]["Average Volume"]:
+                    listCount += 2
+                if tickers[i]["Volume"]>= 100000:
+                    listCount += 1
+                if tickers[i]["Average Volume"]>= 100000:
+                    listCount += 1
             if listCount >0:
-                watchList[i] = tickers
+                watchList[ticker] = tickers[i]
                 
                 
 
@@ -328,6 +324,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
         output = table
         ticker_price_data = tickers
 
+    # At the end of the function:
     return hide_load_btn, output, show_data_btn, ticker_list, ticker_price_data, watchList
 
 

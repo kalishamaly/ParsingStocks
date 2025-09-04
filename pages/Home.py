@@ -9,7 +9,7 @@ Created on Sun Jun  8 16:32:37 2025
 import requests
 from dash import html, callback, Output, Input, dash_table, register_page
 
-register_page(__name__, path="/", name="Home")
+register_page(__name__, path="/", name="Home", order=0)
   
 
 layout = html.Div(children=[
