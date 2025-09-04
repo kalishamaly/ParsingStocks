@@ -14,8 +14,10 @@ from datetime import datetime, timedelta
 import pdb
 from dash import Dash, html, dcc, callback, Output, Input, dash_table, page_container
 import os
+import gunicorn
 
 app = Dash(__name__, use_pages=True)
+server = app.server 
 
 app.layout = html.Div([
     html.H1("📊 Stock App"),
@@ -36,5 +38,5 @@ app.layout = html.Div([
 #     )
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))  # fallback to 8050 locally
-    app.run_server(host="0.0.0.0", port=port, debug=False)
+    port = int(os.environ.get("PORT", 8050))
+    app.run(host="0.0.0.0", port=port, debug=False)
