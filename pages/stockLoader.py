@@ -83,7 +83,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
             res = requests.get(sec_url, headers=headers)
             res.raise_for_status()
             data = res.json()
-            data = {k: data[k] for k in list(data.keys())[200:225]}
+            data = {k: data[k] for k in list(data.keys())[0:225]}
 
             tickersLong = [item['ticker'] for item in list(data.values())]
 
