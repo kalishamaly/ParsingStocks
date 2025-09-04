@@ -26,17 +26,15 @@ app.layout = html.Div([
     page_container
 ])
 
-# if __name__ == "__main__":
-#     app.run_server(debug=True)
 
+# this works 
 # if __name__ == "__main__":
-#     # bind to the env PORT if provided by the host, otherwise 8050 locally
-#     app.run_server(host="0.0.0.0", debug=True)
-    
-    
+#     app.run_server(
+#         debug=True,       # Enables hot-reload and error messages
+#         host="127.0.0.1", # Default: local machine only (use "0.0.0.0" for all devices on LAN)
+#         port=8050         # Default port, change if you want e.g. 8051
+#     )
+
 if __name__ == "__main__":
-    app.run_server(
-        debug=True,       # Enables hot-reload and error messages
-        host="127.0.0.1", # Default: local machine only (use "0.0.0.0" for all devices on LAN)
-        port=8050         # Default port, change if you want e.g. 8051
-    )
+    port = int(os.environ.get("PORT", 8050))  # fallback to 8050 locally
+    app.run_server(host="0.0.0.0", port=port, debug=False)
