@@ -3,4 +3,4 @@ pandas
 yfinance
 requests
 plotly
-gunicorn --bind 0.0.0.0:$PORT stockAppV1:server
+gunicorn
