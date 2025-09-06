@@ -17,8 +17,8 @@ layout = html.Div(children=[
     
     html.B(html.H2("Current App Capabilities")),
     html.Div(children=[
-        html.P("- List all SEC stock tickers"),
-        html.P("- Read in all ticker price data and plot with duration options")
+        html.P("- List all SEC stock tickers")#,
+        #html.P("- Read in all ticker price data and plot with duration options")
     ]),
     
     html.B(html.H2("Planned App Capabilities")),
