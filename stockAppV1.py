@@ -30,13 +30,13 @@ app.layout = html.Div([
 
 
 # this works 
-if __name__ == "__main__":
-    app.run_server(
-        debug=True,       # Enables hot-reload and error messages
-        host="127.0.0.1", # Default: local machine only (use "0.0.0.0" for all devices on LAN)
-        port=8050         # Default port, change if you want e.g. 8051
-    )
-
 # if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 8050))
-#     app.run(host="0.0.0.0", port=port, debug=False)
+#     app.run_server(
+#         debug=True,       # Enables hot-reload and error messages
+#         host="127.0.0.1", # Default: local machine only (use "0.0.0.0" for all devices on LAN)
+#         port=8050         # Default port, change if you want e.g. 8051
+#     )
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8050))
+    app.run(host="0.0.0.0", port=port, debug=False)
