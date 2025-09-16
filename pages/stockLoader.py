@@ -83,7 +83,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
             res = requests.get(sec_url, headers=headers)
             res.raise_for_status()
             data = res.json()
-            data = {k: data[k] for k in list(data.keys())[0:225]}
+            data = {k: data[k] for k in list(data.keys())}
 
             tickersLong = [item['ticker'] for item in list(data.values())]
 
@@ -186,15 +186,27 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                     listCount += 1
                 if tickers[i]["Average Volume"]>= 100000:
                     listCount += 1
+                if tickers[i]["Within 5%?"] == "Yes":
+                    listCount +=1
+                if tickers[i]["Price Change"]>0:
+                    listCount+=1
+                if tickers[i]["Price Change"]>0.25:
+                    listCount+=1
+                if tickers[i]["Price Change"]>0.5:
+                    listCount+=1
+                if tickers[i]["Percent Change"]>0:
+                    listCount+=1
+                if tickers[i]["Percent Change"]>10:
+                    listCount+=1
             if listCount >0:
                 watchList[ticker] = tickers[i]
-                
+            tickers[i]["Watch List Count"] = listCount
                 
 
         table = html.Div(
             dash_table.DataTable(
                 data=tickers,
-                columns=[{"name": col, "id": col} for col in ["Ticker", "Title", "Price", "52 Week High", "Within 5%?","Volume", "Average Volume", "Price Change", "Percent Change"]],
+                columns=[{"name": col, "id": col} for col in ["Ticker", "Title", "Price", "Watch List Count","52 Week High", "Within 5%?","Volume", "Average Volume", "Price Change", "Percent Change"]],
                 style_data_conditional = [
                 {
                     "if": {
