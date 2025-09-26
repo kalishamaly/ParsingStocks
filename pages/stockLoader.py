@@ -187,8 +187,6 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                     listCount += 1
                 if tickers[i]["Average Volume"]>= 100000:
                     listCount += 1
-                if tickers[i]["Within 5%?"] == "Yes":
-                    listCount +=1
                 if tickers[i]["Price Change"]>0:
                     listCount+=1
                 if tickers[i]["Price Change"]>0.25:
