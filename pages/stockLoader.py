@@ -93,7 +93,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                     "Ticker": item.get("ticker", ""),
                     "Title": item.get("title", "")
                 }
-                for item in list(data.values())[:500]
+                for item in list(data.values())[:50]
             ]
 
             table = html.Div(
