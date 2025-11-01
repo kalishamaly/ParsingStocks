@@ -23,8 +23,14 @@ app.layout = html.Div([
     html.H1("📊 Stock App"),
     dcc.Link("Home", href="/"), html.Br(),
     dcc.Link("Stock Loader", href="/stockLoader"), html.Br(),
+    dcc.Link("Market Status Check", href = "/marketCheck"),html.Br(),
     # dcc.Link("Watch List", href = "/watchList"), html.Br(),
     html.Hr(),
+    html.Button(id="loadBtn", style={"display": "none"}),
+    html.Button(id="dataBtn", style={"display": "none"}),
+    html.Div(id="outputContainer", style={"display": "none"}),
+    dcc.Store(id="tickerNames"),
+    dcc.Store(id="tickerPrice"),
     page_container
 ])
 

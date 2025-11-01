@@ -1,6 +1,6 @@
 # Import necessary libraries
 import requests  # Used to fetch SEC ticker data
-from dash import html, callback, Output, Input, dash_table, register_page, dcc  # Dash components for building the app
+from dash import html, callback, Output, Input, dash_table, register_page, dcc, State  # Dash components for building the app
 import yfinance as yf  # Used for fetching historical stock data (commented-out portion)
 from dash import Dash, dash_table
 import pandas as pd
@@ -26,11 +26,6 @@ layout = html.Div([
             'marginTop': '20px'
         })
     ], style={'textAlign': 'center'}),
-    html.Div([
-        html.Button("Write to watchlist", id="goToListBtn", n_clicks=0, style={
-            'marginTop': '20px'
-        })
-    ], style={'textAlign': 'center'}),
 
     # Placeholder for output — like tables or error messages
     html.Div(id="outputContainer"),
@@ -39,8 +34,7 @@ layout = html.Div([
     dcc.Store(id="tickerNames"),
 
     # Placeholder Store for future use (e.g., price data)
-    dcc.Store(id='tickerPrice'),
-    dcc.Store(id='watchListData')
+    dcc.Store(id='tickerPrice')
 ])
 
 from dash import callback_context
@@ -52,14 +46,12 @@ import dash as dash
     Output('dataBtn', 'style'),
     Output('tickerNames', 'data'),
     Output('tickerPrice', 'data'),
-    Output('watchListData','data'),
     Input('loadBtn', 'n_clicks'),
     Input('dataBtn', 'n_clicks'),
     Input('tickerNames', 'data'),
     prevent_initial_call=True
 )
 def handle_all_stock_actions(load_clicks, data_clicks, tickers):
-    watchList = {}
     ctx = callback_context
     triggered_id = ctx.triggered_id
 
@@ -197,8 +189,7 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
                     listCount+=1
                 if tickers[i]["Percent Change"]>10:
                     listCount+=1
-            if listCount >0:
-                watchList[ticker] = tickers[i]
+            
             tickers[i]["Watch List Count"] = listCount
                 
 
@@ -336,6 +327,6 @@ def handle_all_stock_actions(load_clicks, data_clicks, tickers):
         ticker_price_data = tickers
 
     # At the end of the function:
-    return hide_load_btn, output, show_data_btn, ticker_list, ticker_price_data, watchList
+    return hide_load_btn, output, show_data_btn, ticker_list, ticker_price_data
 
 
