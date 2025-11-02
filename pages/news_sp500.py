@@ -37,7 +37,7 @@ def get_spy_tickers():
     headers = {"User-Agent": "Mozilla/5.0 (compatible; KaliBot/1.0; +github.com/shamalykali)"}
     r = requests.get(url, headers=headers, timeout=20)
     r.raise_for_status()
-    soup = BeautifulSoup(r.text, "lxml")
+    soup = BeautifulSoup(r.text, "html.parser")
     out = []
     for row in soup.select("table.table tbody tr"):
         tds = row.find_all("td")
