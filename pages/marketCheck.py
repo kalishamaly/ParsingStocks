@@ -6,23 +6,88 @@ Created on Sat Oct 11 23:17:59 2025
 @author: kalishamay
 """
 
-import requests  # Used to fetch SEC ticker data
-from dash import html, callback, Output, Input, dash_table, register_page, dcc  # Dash components for building the app
-import yfinance as yf  # Used for fetching historical stock data (commented-out portion)
-from dash import Dash, dash_table
-import pandas as pd
-from collections import OrderedDict
+from dash import html, dcc, register_page
 
 register_page(__name__, path="/marketCheck", name="Market Status Check", order=2)
-  
 
-layout = html.Div(children=[
-    html.H2("📥 Market Status Check", style={'textAlign': 'center'}),
-    html.Div([
-        dcc.Link("SPY Market Check", href="/marketCheck/spyCheck"),
-        html.Br(),
-        dcc.Link("Russell 3000 Market Check", href="/marketCheck/russell3000"),
-        html.Br(),
-    ], style={'textAlign': 'center', 'marginTop': '20px'})],
-    
+def SectionHeader(title, subtitle=None, right=None):
+    return html.Div(
+        [
+            html.Div(
+                [
+                    html.Div(title, className="h1"),
+                    html.Div(subtitle, className="sub") if subtitle else None
+                ]
+            ),
+            right,
+        ],
+        style={
+            "display": "flex",
+            "alignItems": "flex-end",
+            "justifyContent": "space-between",
+            "gap": "14px",
+            "marginBottom": "12px",
+        },
+    )
+
+layout = html.Div(
+    className="container",
+    children=[
+        SectionHeader(
+            "📊 Market Status Check",
+            "Choose a module to view market condition snapshots.",
+            right=html.Span("beta", className="badge warn"),
+        ),
+
+        html.Div(className="card", children=[
+            html.Div(className="card-header", children=[html.Div("Modules", className="card-title")]),
+
+            html.Div(className="card-body", children=[
+                html.Div(
+                    style={
+                        "display": "grid",
+                        "gridTemplateColumns": "repeat(auto-fit, minmax(240px, 1fr))",
+                        "gap": "14px",
+                    },
+                    children=[
+                        dcc.Link(
+                            href="/marketCheck/spyCheck",
+                            className="nav-link",
+                            children=html.Div(
+                                style={
+                                    "background": "var(--panel-2)",
+                                    "borderRadius": "14px",
+                                    "padding": "18px",
+                                    "cursor": "pointer",
+                                },
+                                children=[
+                                    html.Div("SPY Market Check", className="h2"),
+                                    html.Div("S&P 500 based market condition scan.", className="sub"),
+                                ],
+                            )
+                        ),
+                        dcc.Link(
+                            href="/marketCheck/russell3000",
+                            className="nav-link",
+                            children=html.Div(
+                                style={
+                                    "background": "var(--panel-2)",
+                                    "borderRadius": "14px",
+                                    "padding": "18px",
+                                    "cursor": "pointer",
+                                },
+                                children=[
+                                    html.Div("Russell 3000 Market Check", className="h2"),
+                                    html.Div("Small + large cap breadth indicator.", className="sub"),
+                                ],
+                            )
+                        ),
+                    ]
+                ),
+
+                html.Div(className="sp-16"),
+                html.Div(className="sub", children="Tip: Add more scan modules here over time (NASDAQ, sectors, etc.).")
+            ]),
+        ]),
+    ],
 )
